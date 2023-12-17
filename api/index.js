@@ -1,10 +1,18 @@
 import express from 'express'
 import mongoose from 'mongoose'
+import dotenv from 'dotenv'
+
+import connectDB from '../config/db.js'
+
+dotenv.config()
 
 const app = express();
 
-mongoose.connect("mongodb+srv://anshumi:anshumi@databse.u7ngdrl.mongodb.net/?retryWrites=true&w=majority")
+const PORT = process.env.PORT
 
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
-})
+const startServer = async () => {
+  await connectDB();
+  app.listen(PORT, () => console.log(`Server is listening on the port ${PORT}`));
+};
+
+startServer();
