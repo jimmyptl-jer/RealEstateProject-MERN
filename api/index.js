@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors'
+import cookieParser from 'cookie-parser';
 
 import connectDB from '../config/db.js';
 import userRoute from './Routes/userRoutes.js';
@@ -22,6 +23,8 @@ app.use(express.json());
 
 // Middleware: Parse URL-encoded requests with extended options
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cookieParser())
 
 const PORT = process.env.PORT || 3000; // Use a default port if PORT is not defined
 
