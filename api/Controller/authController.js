@@ -1,13 +1,13 @@
-import User from "../Models/userModel";
+import User from "../Models/userModel.js";
 import bcrypt from 'bcrypt';
 
 export const signUp = async (req, res, next) => {
   const { username, password, email } = req.body;
 
-  const userExit = await User.findOne({ email })
+  const userExists = await User.findOne({ email });
 
-  if (userExit) {
-    res.status(400).json('User already exists')
+  if (userExists) {
+    return res.status(400).json({ message: 'User already exists' });
   }
 
   try {
@@ -22,8 +22,8 @@ export const signUp = async (req, res, next) => {
     await newUser.save();
 
     // Return a JSON response for success
-    res.status(201).json({ message: 'User created successfully' });
+    return res.status(201).json({ message: 'User created successfully' });
   } catch (error) {
-    next(error)
+    next(error);
   }
 };

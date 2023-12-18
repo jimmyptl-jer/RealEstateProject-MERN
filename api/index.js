@@ -1,5 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors'
+
 import connectDB from '../config/db.js';
 import userRoute from './Routes/userRoutes.js';
 import authRoute from './Routes/authRoutes.js';
@@ -7,6 +9,13 @@ import authRoute from './Routes/authRoutes.js';
 dotenv.config();
 
 const app = express();
+
+app.use(cors({
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type']
+}));
+
 
 // Middleware: Parse incoming JSON requests
 app.use(express.json());
