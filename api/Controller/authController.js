@@ -32,6 +32,7 @@ export const signUp = async (req, res, next) => {
   }
 };
 
+
 export const signIn = async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -48,16 +49,63 @@ export const signIn = async (req, res, next) => {
       return next(errorHandler(401, 'Wrong credentials!'));
     }
 
-    const { password: pass, ...rest } = validUser._doc
+    const { password: pass, ...rest } = validUser._doc;
 
     const token = jwt.sign({ username: validUser.username, email: validUser.email }, process.env.JWT_SECRET);
+
+    console.log('Valid user:', validUser);
+    console.log('Password is valid');
+    console.log('Token created:', token);
+
     res
       .cookie('access_token', token, { httpOnly: true, expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) })
       .status(200)
       .json(rest);
 
   } catch (error) {
-    console.error(error);
+    console.error('Error during sign-in:', error);
+    next(error);
+  }
+};
+
+export const googleAuth = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+      const token = jwt.sign({ id: userExists._id }, process.env.JWT_SECRET);
+
+      const { password: pass, ...rest } = userExists._doc;
+
+      res
+        .cookie('access_token', token, { httpOnly: true })
+        .status(200)
+        .json(rest);
+    } else {
+      const generatePassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+
+      const hashPassword = bcrypt.hashSync(generatePassword, 10);
+
+      const newUser = new User({
+        username: req.body.name.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-4),
+        email: req.body.email,
+        password: hashPassword,
+        avatar: req.body.photo
+      });
+
+      await newUser.save();
+
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+
+      const { password: pass, ...rest } = newUser._doc;
+
+      res
+        .cookie('access_token', token, { httpOnly: true })
+        .status(200)
+        .json(rest);
+    }
+  } catch (error) {
     next(error);
   }
 };

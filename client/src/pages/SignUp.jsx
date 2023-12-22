@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import OAuth from "../components/OAuth";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -8,8 +9,7 @@ const SignUp = () => {
     password: ""
   });
 
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -24,24 +24,33 @@ const SignUp = () => {
     e.preventDefault();
     setLoading(true);
 
-    const response = await fetch('http://localhost:3000/api/auth/sign-up', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData)
-    });
+    try {
+      const response = await fetch('http://localhost:3000/api/auth/sign-up', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
 
-    const data = await response.json();
+      if (!response.ok) {
+        setLoading(false);
+        return;
+      }
 
-    if (data.success === false) {
-      setError(data.message);
+      const data = await response.json();
+
+      if (data.success === false) {
+
+        setLoading(false);
+        return;
+      }
+
+      navigate('/sign-in');
+    } catch (error) {
+      console.error(error);
+    } finally {
       setLoading(false);
-      return;
     }
-
-    navigate('/sign-in')
-    setLoading(false);
   };
-
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -54,7 +63,6 @@ const SignUp = () => {
           type="text"
           placeholder="Username"
           className="border p-3 rounded-lg"
-          id="username"
           name="username"
           onChange={handleChange}
         />
@@ -63,7 +71,6 @@ const SignUp = () => {
           type="email"
           placeholder="Email"
           className="border p-3 rounded-lg"
-          id="email"
           name="email"
           onChange={handleChange}
         />
@@ -72,7 +79,6 @@ const SignUp = () => {
           type="password"
           placeholder="Password"
           className="border p-3 rounded-lg"
-          id="password"
           name="password"
           onChange={handleChange}
         />
@@ -80,9 +86,12 @@ const SignUp = () => {
         <button
           disabled={loading}
           className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95"
-          type="submit">
+          type="submit"
+        >
           {loading ? 'Loading...' : 'Sign Up'}
         </button>
+
+        <OAuth />
       </form>
 
       <div className="flex gap-2 mt-5">

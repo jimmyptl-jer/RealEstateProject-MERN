@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/jimmyptl-jer/RealEstateProject-MERN#readme",
   "dependencies": {
+    "@reduxjs/toolkit": "^2.0.1",
     "bcrypt": "^5.1.1",
     "cookie": "^0.6.0",
     "cookie-parser": "^1.4.6",
@@ -28,6 +29,7 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.3",
-    "nodemon": "^3.0.2"
+    "nodemon": "^3.0.2",
+    "redux-persist": "^6.0.0"
   }
 }

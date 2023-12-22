@@ -2,7 +2,9 @@
 
 const Profile = () => {
   return (
-    <div>Profile</div>
+    <div>
+      <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
+    </div>
   )
 }
 
